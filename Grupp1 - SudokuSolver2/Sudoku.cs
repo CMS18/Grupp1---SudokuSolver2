@@ -98,19 +98,43 @@ namespace Grupp1Sudoku
                     {
                         if (board[row, col] == 0)
                         {
-
                             int newCellValue = FindOnlyPossibleNumber(row, col);
                             if (newCellValue != 0)
                             {
                                 board[row, col] = newCellValue;
                                 filledAnyCell = true;
-
                             }
-
                         }
                     }
-                }
-            } while (filledAnyCell);
+                } int[,] boardCopy = (int[,]) board.Clone(); 
+                filledAnyCell = false;
+
+                //anropa Metod: FindEmptyCell() när den hittat en tom cell,
+                //anropa Metod: FindPossibleNumbersForCell() : spara i lista
+                // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
+                // Clone() (Kopiera brädet)
+                // ANropa metod: FirstPossibleNumber()
+                //Skriv in första möjliga siffra på kopian
+                //Kör FindOnlyPossibleNumber()
+                //Return True eller False
+                //True = vinst
+                //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
+                //När alla möjliga siffror testats i cellen (for-loop)
+                //If False = olösligt bräde
+
+            } while (filledAnyCell); //ska denna loop sluta ngn annnstans??
+
+
+
+
+
+
+
+
+
+
+
+
 
             PrintSudoku();
         }
@@ -165,6 +189,147 @@ namespace Grupp1Sudoku
             Console.WriteLine("-------------------------"); //Skriv ut understrecksrad
 
         }
+        public int FindPossibleNumbers(int cellY, int cellX)
+        {
+
+            bool[] eliminatedNumbers = new bool[9];
+            List<int> PossibleNumbers = new List<int>(); 
+
+            //Search the row
+            for (int x = 0; x < 9; x++)
+            {
+                int cellVal = board[cellY, x];
+                if (cellVal != 0)
+                {
+                    eliminatedNumbers[cellVal - 1] = true;
+                }
+            }
+
+            //Search the column
+            for (int y = 0; y < 9; y++)
+            {
+                int cellVal = board[y, cellX];
+                if (cellVal != 0)
+                {
+                    eliminatedNumbers[cellVal - 1] = true;
+                }
+            }
+
+            //Search the block
+            int blockX = cellX / 3;
+            int blockY = cellY / 3;
+
+            //hitta block koordinater
+            for (int y = blockY * 3; y < (blockY * 3) + 3; y++)
+            {
+                for (int x = blockX * 3; x < (blockX * 3) + 3; x++)
+                {
+                    int cellVal = board[y, x];
+                    if (cellVal != 0)
+                    {
+                        eliminatedNumbers[cellVal - 1] = true;
+                    }
+                }
+
+            }
+            int trueCount = 0;
+
+            foreach (bool b in eliminatedNumbers)
+            {
+                if (b == true)
+                {
+                    trueCount++;
+                }
+            }
+            if (trueCount == 9)
+            {
+                Console.WriteLine("Brädet olösligt.");
+                return 0;
+            }
+            else
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    if (eliminatedNumbers[i] == false)
+                    {
+                        PossibleNumbers.Add(i + 1);
+                    }
+
+                }
+
+                return FindOnlyPossibleNumber(cellY, cellX, PossibleNumbers);
+            } 
+
+          
+        }
+        public int FindOnlyPossibleNumber(int cellY, int cellX, List<int> possibleNumbers)
+        {
+
+
+            bool[] eliminatedNumbers = new bool[9];
+
+            //Search the row
+            for (int x = 0; x < 9; x++)
+            {
+                int cellVal = board[cellY, x];
+                if (cellVal != 0)
+                {
+                    eliminatedNumbers[cellVal - 1] = true;
+                }
+            }
+
+            //Search the column
+            for (int y = 0; y < 9; y++)
+            {
+                int cellVal = board[y, cellX];
+                if (cellVal != 0)
+                {
+                    eliminatedNumbers[cellVal - 1] = true;
+                }
+            }
+
+            //Search the block
+            int blockX = cellX / 3;
+            int blockY = cellY / 3;
+
+            //hitta block koordinater
+            for (int y = blockY * 3; y < (blockY * 3) + 3; y++)
+            {
+                for (int x = blockX * 3; x < (blockX * 3) + 3; x++)
+                {
+                    int cellVal = board[y, x];
+                    if (cellVal != 0)
+                    {
+                        eliminatedNumbers[cellVal - 1] = true;
+                    }
+                }
+
+            }
+            int trueCount = 0;
+
+            foreach (bool b in eliminatedNumbers)
+            {
+                if (b == true)
+                {
+                    trueCount++;
+                }
+            }
+
+            if (trueCount == 8)
+            {
+                for (int i = 0; i < 9; i++)
+                {
+                    if (eliminatedNumbers[i] == false)
+                    {
+                        return i + 1;
+                    }
+
+                }
+            }
+            return 0;
+
+        }
+
 
 
     }
