@@ -18,7 +18,9 @@ namespace Grupp1Sudoku
         public Sudoku(string input)
         {
             board = TransformStringToArray(input);
+
         }
+
         //Metod som söker efter enda möjliga siffra för en cell
         public int FindOnlyPossibleNumber(int cellY, int cellX)
         {
@@ -83,6 +85,7 @@ namespace Grupp1Sudoku
 
         }
 
+
         public void Solve(ref int[,] board)  //det är väl Solve-metoden vi ska anropa rekursivt??
         {                                //skickar in board som argument
             bool filledAnyCell;
@@ -102,20 +105,22 @@ namespace Grupp1Sudoku
                                 board[row, col] = newCellValue;
                                 filledAnyCell = true;
                             }
-                            else  //om inga fyllda celler under ett varv; gå vidare med rekursiv lösning
+                            else //om inga fyllda celler under ett varv; gå vidare med rekursiv lösning
                             {
                                 boardCopy = (int[,])board.Clone();
-                                filledAnyCell = false;
                                 FindFirstEmptyCell(); //Letar upp första bästa tomma cell
-                                FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]); //Argument: y och x-koordinater 
-                                                                                                       // från metoden FindFirstEmptyCell
+                                FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
                                 TryCellValue();
+                                //filledAnyCell = false; // Behöver vi i detta läge sätta villkoret till false?
                             }
+
                         }
                     }
                 }
-            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??
-
+                                                                                                                     
+            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??                                                                                                                                 
+            PrintSudoku();
+        }           
             //anropa Metod: FindEmptyCell() när den hittat en tom cell,
             //anropa Metod: FindPossibleNumbersForCell() : spara i lista
             // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
@@ -127,22 +132,18 @@ namespace Grupp1Sudoku
             //True = vinst
             //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
             //När alla möjliga siffror testats i cellen (for-loop)
-            //If False = olösligt bräde
-
-
-            PrintSudoku();
-        }
-
+            //If False = olösligt bräde       
+         
         ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-        public void FindPossibleNumbers(int cellY, int cellX)
+        
+        public void FindPossibleNumbers(int cellY, int cellX) 
         {
             bool[] eliminatedNumbers = new bool[9];
 
             //Search the row
             for (int x = 0; x < 9; x++)
             {
-                int cellVal = board[cellY, x];
+                int cellVal = boardCopy[cellY, x]; //board[cellY, x]
                 if (cellVal != 0)
                 {
                     eliminatedNumbers[cellVal - 1] = true;
@@ -152,7 +153,7 @@ namespace Grupp1Sudoku
             //Search the column
             for (int y = 0; y < 9; y++)
             {
-                int cellVal = board[y, cellX];
+                int cellVal = boardCopy[y, cellX]; //board[y,cellX]
                 if (cellVal != 0)
                 {
                     eliminatedNumbers[cellVal - 1] = true;
@@ -160,15 +161,15 @@ namespace Grupp1Sudoku
             }
 
             //Search the block
-            int blockX = cellX / 3;
-            int blockY = cellY / 3;
+            int blockX = cellX / 3; //cellX
+            int blockY = cellY / 3; //cellY
 
             //hitta block koordinater
             for (int y = blockY * 3; y < (blockY * 3) + 3; y++)
             {
                 for (int x = blockX * 3; x < (blockX * 3) + 3; x++)
                 {
-                    int cellVal = board[y, x];
+                    int cellVal = boardCopy[y, x]; // board
                     if (cellVal != 0)
                     {
                         eliminatedNumbers[cellVal - 1] = true;
@@ -203,7 +204,8 @@ namespace Grupp1Sudoku
 
         public void FindFirstEmptyCell()
         {
-            while (true)
+            bool goAhead = true; 
+            while (goAhead)
             {
                 for (int y = 0; y < 9; y++)
                 {
@@ -211,10 +213,15 @@ namespace Grupp1Sudoku
                     {
                         if (boardCopy[y, x] == 0)
                         {
-                            emptyCellCoordinates.Add(y);
+                            emptyCellCoordinates.Add(y); 
                             emptyCellCoordinates.Add(x);
-                            break;          //varför fortsätter loopen fast den hittat en tom cell??
+                            goAhead = false; 
+                            y = 9;
+                            break;          //varför fortsätter loopen fast den hittat en tom cell? break stoppar närmaste loopen 
+                                            // satte därför y till 9 för att avbryta helt. Ändrade även boolvillkoret för att tydligare avbryta loopen.
+                                            // för vi vill väl bara kolla en tom cell?
                         }
+                      
                     }
                 }
             } 
@@ -261,14 +268,14 @@ namespace Grupp1Sudoku
             Console.WriteLine("-------------------------"); //Skriv ut understrecksrad
         }
         //Metod med loop för att testa de möjliga numren i den cellen.
-        public void TryCellValue()
+        public void TryCellValue()// int row, int col
         {
             int y = emptyCellCoordinates[0];
             int x = emptyCellCoordinates[1];
 
             for (int i = 0; i < PossibleNumbers.Count; i++)
             {
-                boardCopy[y, x] = PossibleNumbers[i];
+                boardCopy[y,x] = PossibleNumbers[i]; // y,x //uppdaterar kopian. 
                 Solve(ref boardCopy);               //lägger till ref i argument, tror det ska vara det??
                 //Solve ska returnera true eller false, för varje siffra i PossibleNumbers
                 //När hela loopen körts: vinst eller olösbart
