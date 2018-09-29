@@ -151,7 +151,7 @@ namespace Grupp1Sudoku
          
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         
-        public int FindPossibleNumbers(int cellY, int cellX) 
+        public List<int> FindPossibleNumbers(int cellY, int cellX) 
         {
             bool[] eliminatedNumbers = new bool[9];
 
@@ -200,14 +200,14 @@ namespace Grupp1Sudoku
                     trueCount++;
                 }
             }
-            if (trueCount == 9)
-            {
-                Console.WriteLine("Brädet är olösligt.");
-                return 0; //returnerar noll om det inte finns någon siffra att sätta in. 
-               // PrintSudoku();//Avbryt spelet på något sätt (break funkar ej??)
-            }
-            else
-            {
+            //if (trueCount == 9)
+            //{
+            //    Console.WriteLine("Brädet är olösligt.");
+            //    return 0; //returnerar noll om det inte finns någon siffra att sätta in. 
+            //    PrintSudoku();//Avbryt spelet på något sätt (break funkar ej??)
+            //}
+            //else
+            
                 for (int i = 0; i < 9; i++)
                 {
                     if (eliminatedNumbers[i] == false)
@@ -215,11 +215,11 @@ namespace Grupp1Sudoku
                        PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
                     }
                 }
-                return 1; //returnerar 1. Vi behöver inte returnera listans värde här eftersom vi hanterar det sen i Trymetoden.
-            }
+                return PossibleNumbers; // vi returnerar den aktuella listan så att den kan användas av Solve metoden. 
+            
         }
 
-        public void FindFirstEmptyCell()
+        public void FindFirstEmptyCell() // returnerar
         {
             bool goAhead = true; 
             while (goAhead)
@@ -230,7 +230,7 @@ namespace Grupp1Sudoku
                     {
                         if (boardCopy[y, x] == 0)
                         {
-                            emptyCellCoordinates.Add(y); 
+                            emptyCellCoordinates.Add(y); // anropa metoden possiblenumbers
                             emptyCellCoordinates.Add(x);
                             goAhead = false; 
                             y = 9;
