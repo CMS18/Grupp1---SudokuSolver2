@@ -89,6 +89,7 @@ namespace Grupp1Sudoku
         public void Solve(ref int[,] board)  //det är väl Solve-metoden vi ska anropa rekursivt??
         {                                //skickar in board som argument
             bool filledAnyCell;
+            bool manyGuess;
             do
             {
                 filledAnyCell = false;
@@ -104,22 +105,36 @@ namespace Grupp1Sudoku
                             {
                                 board[row, col] = newCellValue;
                                 filledAnyCell = true;
-                            }
-                            else //om inga fyllda celler under ett varv; gå vidare med rekursiv lösning
-                            {
-                                boardCopy = (int[,])board.Clone();
-                                FindFirstEmptyCell(); //Letar upp första bästa tomma cell
-                                FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
-                                TryCellValue();
-                                //filledAnyCell = false; // Behöver vi i detta läge sätta villkoret till false?
-                            }
-
+                            }                      
                         }
                     }
                 }
                                                                                                                      
-            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??                                                                                                                                 
+            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??   
+
+            FindFirstEmptyCell(); //Letar upp första bästa tomma cell
+
+            // Om FindFirstEmtyCell inte hittar någon tom cell == förlust! Ngn if sats här som går till Print() else den rekursiva delen
+            //om inga fyllda celler under ett varv; OCH det finns tomma celler kvar gå vidare med rekursiv lösning
+            boardCopy = (int[,])board.Clone();
+            do
+            {
+                manyGuess = false;                
+                int cellvalue = FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
+
+                    if (cellvalue != 0)
+                    {
+                        TryCellValue();
+                    }
+                    else
+                    {
+                        manyGuess = true; 
+                    }
+                
+                
+            } while (manyGuess);
             PrintSudoku();
+
         }           
             //anropa Metod: FindEmptyCell() när den hittat en tom cell,
             //anropa Metod: FindPossibleNumbersForCell() : spara i lista
@@ -136,7 +151,7 @@ namespace Grupp1Sudoku
          
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         
-        public void FindPossibleNumbers(int cellY, int cellX) 
+        public int FindPossibleNumbers(int cellY, int cellX) 
         {
             bool[] eliminatedNumbers = new bool[9];
 
@@ -188,7 +203,8 @@ namespace Grupp1Sudoku
             if (trueCount == 9)
             {
                 Console.WriteLine("Brädet är olösligt.");
-                //Avbryt spelet på något sätt (break funkar ej??)
+                return 0; //returnerar noll om det inte finns någon siffra att sätta in. 
+               // PrintSudoku();//Avbryt spelet på något sätt (break funkar ej??)
             }
             else
             {
@@ -196,9 +212,10 @@ namespace Grupp1Sudoku
                 {
                     if (eliminatedNumbers[i] == false)
                     {
-                        PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
+                       PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
                     }
                 }
+                return 1; //returnerar 1. Vi behöver inte returnera listans värde här eftersom vi hanterar det sen i Trymetoden.
             }
         }
 
