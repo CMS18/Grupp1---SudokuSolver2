@@ -89,6 +89,7 @@ namespace Grupp1Sudoku
         public void Solve(ref int[,] board)  //det är väl Solve-metoden vi ska anropa rekursivt??
         {                                //skickar in board som argument
             bool filledAnyCell;
+            bool manyGuess;
             do
             {
                 filledAnyCell = false;
@@ -104,39 +105,53 @@ namespace Grupp1Sudoku
                             {
                                 board[row, col] = newCellValue;
                                 filledAnyCell = true;
-                            }
+                            }                      
                         }
                     }
                 }
+                                                                                                                     
+            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??   
 
-            } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans?? 
-           // PrintSudoku(board);  //vill vi verkligen skriva ut originalbrädet här?
-
-
-            //om inga fyllda celler under ett varv; gå vidare med rekursiv lösning
-
-            boardCopy = (int[,])board.Clone();
             FindFirstEmptyCell(); //Letar upp första bästa tomma cell
-            FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
-            TryCellValue();
 
-        }
-        //anropa Metod: FindEmptyCell() när den hittat en tom cell,
-        //anropa Metod: FindPossibleNumbersForCell() : spara i lista
-        // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
-        // Clone() (Kopiera brädet)
-        // ANropa metod: FirstPossibleNumber()
-        //Skriv in första möjliga siffra på kopian
-        //Kör FindOnlyPossibleNumber()
-        //Return True eller False
-        //True = vinst
-        //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
-        //När alla möjliga siffror testats i cellen (for-loop)
-        //If False = olösligt bräde       
+            // Om FindFirstEmtyCell inte hittar någon tom cell == förlust! Ngn if sats här som går till Print() else den rekursiva delen
+            //om inga fyllda celler under ett varv; OCH det finns tomma celler kvar gå vidare med rekursiv lösning
+            boardCopy = (int[,])board.Clone();
+            do
+            {
+                manyGuess = false;                
+                int cellvalue = FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
 
+                    if (cellvalue != 0)
+                    {
+                        TryCellValue();
+                    }
+                    else
+                    {
+                        manyGuess = true; 
+                    }
+                
+                
+            } while (manyGuess);
+            PrintSudoku();
+
+        }           
+            //anropa Metod: FindEmptyCell() när den hittat en tom cell,
+            //anropa Metod: FindPossibleNumbersForCell() : spara i lista
+            // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
+            // Clone() (Kopiera brädet)
+            // ANropa metod: FirstPossibleNumber()
+            //Skriv in första möjliga siffra på kopian
+            //Kör FindOnlyPossibleNumber()
+            //Return True eller False
+            //True = vinst
+            //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
+            //När alla möjliga siffror testats i cellen (for-loop)
+            //If False = olösligt bräde       
+         
         ///////////////////////////////////////////////////////////////////////////////////////////////////
-
-        public void FindPossibleNumbers(int cellY, int cellX)
+        
+        public int FindPossibleNumbers(int cellY, int cellX) 
         {
             bool[] eliminatedNumbers = new bool[9];
 
@@ -187,9 +202,9 @@ namespace Grupp1Sudoku
             }
             if (trueCount == 9)
             {
-                Console.WriteLine("Brädet är olösligt. Resultat: ");
-                PrintSudoku(boardCopy);
-                //Avbryt spelet på något sätt (break funkar ej??)
+                Console.WriteLine("Brädet är olösligt.");
+                return 0; //returnerar noll om det inte finns någon siffra att sätta in. 
+               // PrintSudoku();//Avbryt spelet på något sätt (break funkar ej??)
             }
             else
             {
@@ -197,9 +212,10 @@ namespace Grupp1Sudoku
                 {
                     if (eliminatedNumbers[i] == false)
                     {
-                        PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
+                       PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
                     }
                 }
+                return 1; //returnerar 1. Vi behöver inte returnera listans värde här eftersom vi hanterar det sen i Trymetoden.
             }
         }
 
