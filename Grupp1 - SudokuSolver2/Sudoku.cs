@@ -105,50 +105,50 @@ namespace Grupp1Sudoku
                             {
                                 board[row, col] = newCellValue;
                                 filledAnyCell = true;
-                            }                      
+                            }
                         }
                     }
                 }
-                                                                                                                     
+
             } while (filledAnyCell); //eller ska denna loop sluta ngn annnstans??   
 
-            FindFirstEmptyCell(); //Letar upp första bästa tomma cell
+            boardCopy = (int[,])board.Clone();
+            FindFirstEmptyCell(boardCopy); //Letar upp första bästa tomma cell
 
             // Om FindFirstEmtyCell inte hittar någon tom cell == förlust! Ngn if sats här som går till Print() else den rekursiva delen
             //om inga fyllda celler under ett varv; OCH det finns tomma celler kvar gå vidare med rekursiv lösning
-            boardCopy = (int[,])board.Clone();
             do
             {
-                manyGuess = false;                
+                manyGuess = false;
                 int cellvalue = FindPossibleNumbers(emptyCellCoordinates[0], emptyCellCoordinates[1]);//Argument: y och x-koordinater från metoden FindFirstEmptyCell
 
-                    if (cellvalue != 0)
-                    {
-                        TryCellValue();
-                    }
-                    else
-                    {
-                        manyGuess = true; 
-                    }
-                
-                
-            } while (manyGuess);
-            PrintSudoku();
+                if (cellvalue != 0)
+                {
+                    TryCellValue();
+                }
+                else
+                {
+                    manyGuess = true;
+                }
 
-        }           
-            //anropa Metod: FindEmptyCell() när den hittat en tom cell,
-            //anropa Metod: FindPossibleNumbersForCell() : spara i lista
-            // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
-            // Clone() (Kopiera brädet)
-            // ANropa metod: FirstPossibleNumber()
-            //Skriv in första möjliga siffra på kopian
-            //Kör FindOnlyPossibleNumber()
-            //Return True eller False
-            //True = vinst
-            //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
-            //När alla möjliga siffror testats i cellen (for-loop)
-            //If False = olösligt bräde       
-         
+
+            } while (manyGuess);
+            PrintSudoku(boardCopy);
+
+        }
+        //anropa Metod: FindEmptyCell() när den hittat en tom cell,
+        //anropa Metod: FindPossibleNumbersForCell() : spara i lista
+        // Return True/false (if false = hela brädet olösligt, if true= fortsätt med nedan kod)
+        // Clone() (Kopiera brädet)
+        // ANropa metod: FirstPossibleNumber()
+        //Skriv in första möjliga siffra på kopian
+        //Kör FindOnlyPossibleNumber()
+        //Return True eller False
+        //True = vinst
+        //False = Släng kopian, ta ny kopia och lägg in nästa möjliga siffra i cell
+        //När alla möjliga siffror testats i cellen (for-loop)
+        //If False = olösligt bräde       
+
         ///////////////////////////////////////////////////////////////////////////////////////////////////
         
         public List<int> FindPossibleNumbers(int cellY, int cellX) 
@@ -212,16 +212,16 @@ namespace Grupp1Sudoku
                 {
                     if (eliminatedNumbers[i] == false)
                     {
-                       PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
+                        PossibleNumbers.Add(i + 1);  // listan med möjliga värden för cellen
                     }
                 }
                 return PossibleNumbers; // vi returnerar den aktuella listan så att den kan användas av Solve metoden. 
             
         }
 
-        public void FindFirstEmptyCell() // returnerar
+        public void FindFirstEmptyCell(int[,] boardCopy)
         {
-            bool goAhead = true; 
+            bool goAhead = true;
             while (goAhead)
             {
                 for (int y = 0; y < 9; y++)
@@ -232,16 +232,16 @@ namespace Grupp1Sudoku
                         {
                             emptyCellCoordinates.Add(y); // anropa metoden possiblenumbers
                             emptyCellCoordinates.Add(x);
-                            goAhead = false; 
+                            goAhead = false;
                             y = 9;
                             break;          //varför fortsätter loopen fast den hittat en tom cell? break stoppar närmaste loopen 
                                             // satte därför y till 9 för att avbryta helt. Ändrade även boolvillkoret för att tydligare avbryta loopen.
                                             // för vi vill väl bara kolla en tom cell?
                         }
-                      
+
                     }
                 }
-            } 
+            }
         }
         private int[,] TransformStringToArray(string input)
         {
@@ -256,7 +256,7 @@ namespace Grupp1Sudoku
             return newboard;
         }
 
-        public void PrintSudoku()
+        public void PrintSudoku(int[,] board)
         {
             for (int y = 0; y < board.GetLength(1); y++) //For-loop för kolumnen
             {
@@ -292,7 +292,7 @@ namespace Grupp1Sudoku
 
             for (int i = 0; i < PossibleNumbers.Count; i++)
             {
-                boardCopy[y,x] = PossibleNumbers[i]; // y,x //uppdaterar kopian. 
+                boardCopy[y, x] = PossibleNumbers[i]; // y,x //uppdaterar kopian. 
                 Solve(ref boardCopy);               //lägger till ref i argument, tror det ska vara det??
                 //Solve ska returnera true eller false, för varje siffra i PossibleNumbers
                 //När hela loopen körts: vinst eller olösbart

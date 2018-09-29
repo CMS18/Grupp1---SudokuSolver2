@@ -23,7 +23,7 @@ namespace Grupp1Sudoku
             //                         "008102900700000008006708200" +
             //                         "002609500800203009005010300");
             Sudoku game = new Sudoku(easy3);
-            game.PrintSudoku();
+            game.PrintSudoku(Sudoku.board);
             game.Solve(ref Sudoku.board);
 
             Console.ReadLine();
