@@ -22,7 +22,7 @@ namespace Grupp1Sudoku
             //Sudoku game = new Sudoku("003020600900305001001806400" +
             //                         "008102900700000008006708200" +
             //                         "002609500800203009005010300");
-            Sudoku game = new Sudoku(medium1);
+            Sudoku game = new Sudoku(easy3);
             game.PrintSudoku(Sudoku.board);
             game.Solve(ref Sudoku.board);
 
