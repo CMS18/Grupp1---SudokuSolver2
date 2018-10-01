@@ -119,8 +119,9 @@ namespace Grupp1Sudoku
                 PrintSudoku(board);
             }
             else
-            { 
-            boardCopy = (int[,])board.Clone();  //Vårt originalbräde har blivit uppdaterad med siffra 1 efter första ronden vilket borde vara fel??
+            {
+                PrintSudoku(board); //utskrift bara för att se hur långt Sudokut kommit
+                boardCopy = (int[,])board.Clone();  //Vårt originalbräde har blivit uppdaterad med siffra 1 efter första ronden vilket borde vara fel??
                                                     // Nu hittar den inte längre tillbaka till första tomma cellen för att testa andra möjliga siffror här.
             // Om FindFirstEmtyCell inte hittar någon tom cell == klart! Ngn if sats här som går till Print() else den rekursiva delen
             //om inga fyllda celler under ett varv; OCH det finns tomma celler kvar gå vidare med rekursiv lösning
@@ -130,7 +131,7 @@ namespace Grupp1Sudoku
                 //List<int> cellvalue = FindPossibleNumbers();//Argument: y och x-koordinater från metoden FindFirstEmptyCell          
                 PrintSudoku(boardCopy);         
             }
-            PrintSudoku(boardCopy);
+            PrintSudoku(boardCopy); //Utskrift 2 ggr?
         }
         //anropa Metod: FindEmptyCell() när den hittat en tom cell,
         //anropa Metod: FindPossibleNumbersForCell() : spara i lista
@@ -305,7 +306,7 @@ namespace Grupp1Sudoku
             for (int i = 0; i < possibleNumbers.Count; i++)
             {
                 boardCopy[cellY, cellX] = possibleNumbers[i]; // y,x //uppdaterar kopian. 
-                Solve( boardCopy);               //lägger till ref i argument, tror det ska vara det??
+                Solve(boardCopy);               //lägger till ref i argument, tror det ska vara det??
                 //Solve ska returnera true eller false, för varje siffra i PossibleNumbers
                 //När hela loopen körts: vinst eller olösbart
             }
